@@ -1,0 +1,43 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace LMS_ProjectTraining.Admin
+{
+    public partial class AdminSite : System.Web.UI.MasterPage
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (Request.QueryString["lang"] != null)
+            {
+                string requestedLang = Request.QueryString["lang"].ToString();
+                string currentLang = Session["lang"] != null ? Session["lang"].ToString() : "";
+                
+                if (requestedLang != currentLang)
+                {
+                    Session["lang"] = requestedLang;
+                    Response.Redirect(Request.Url.AbsolutePath);
+                }
+            }
+            if (Session["Adminrole"]!=null && Session["Adminrole"].ToString()== "Admin")
+            {
+
+                if (!IsPostBack)
+                {
+                    lblUserName.Text = "Hi," + Session["Adminusername"].ToString();
+
+                    Response.Cache.SetCacheability(HttpCacheability.NoCache);
+                    Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
+                    Response.Cache.SetNoStore();
+                }
+            }
+            else
+            {
+                Response.Redirect("~/signout.aspx");
+            }
+        }
+    }
+}
